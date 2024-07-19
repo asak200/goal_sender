@@ -2,13 +2,50 @@
 
 import rclpy
 from rclpy.node import Node
-from pose_int.msg import MsgDef
+from std_msgs.msg import Empty
+
+import serial
+import time
+import yaml
 
 class SerialComNode(Node):
 
     def __init__(self):
         super().__init__('serial_com1')
+        self.yaml_path = '/home/asak/dev_ws2/src/goal_sender/my_services/gui_data.yaml'
         self.ser_port = '/dev/ttyACM0'
+        self.ser = serial.Serial(self.ser_port, 115200, timeout=1.0)
+        time.sleep(2.)
+        self.ser.reset_input_buffer()
+        self.get_logger().info("Serial com established")
+
+        self.start()
+
+    def start(self):
+        try:
+            while True:
+                time.sleep(0.02)
+                if self.ser.in_waiting > 0: # to receive 
+                    line = self.ser.readline().decode('utf-8').rstrip()
+                    self.analize_msg(line)
+        except KeyboardInterrupt:
+            print('close serial')
+            self.ser.close()
+
+    def analize_msg(self, line: str):
+        order, content = line.split(': ')
+        with open(self.yaml_path, 'r') as file:
+            data = yaml.safe_load(file)
+        
+        if order == 'd' or 'wcm' or 'wait': # other updater
+            data['other'] = order
+        elif order == 'start' or 'stop' or 'done': # status updater
+            data['status'] = order
+        # sensor data
+        data[order] = content
+        
+        with open(self.yaml_path, 'w') as file:
+            yaml.dump(data, file)
 
 
 
