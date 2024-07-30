@@ -13,7 +13,7 @@ class SerialComNode(Node):
     def __init__(self):
         super().__init__('serial_com1')
         self.yaml_path = '/home/asak/dev_ws2/src/goal_sender/my_services/gui_data.yaml'
-        self.ser_port = '/dev/ttyACM0'
+        self.ser_port = '/dev/ttyUSB0'
         self.ser = serial.Serial(self.ser_port, 115200, timeout=1.0)
         time.sleep(2.)
         self.ser.reset_input_buffer()
@@ -33,13 +33,15 @@ class SerialComNode(Node):
             self.ser.close()
 
     def analize_msg(self, line: str):
+        if not ': ' in line or len(line.split(': ')) != 2:
+            return
         order, content = line.split(': ')
         with open(self.yaml_path, 'r') as file:
             data = yaml.safe_load(file)
-        
-        if order == 'd' or 'wcm' or 'wait': # other updater
+
+        if order == 'd' or order == 'wcm' or order == 'wait': # other updater
             data['other'] = order
-        elif order == 'start' or 'stop' or 'done': # status updater
+        elif order == 'start' or order == 'stop' or order == 'done': # status updater
             data['status'] = order
         # sensor data
         data[order] = content

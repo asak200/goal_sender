@@ -4,8 +4,8 @@ package_name = 'goal_sender'
 
 setup(
     name=package_name,
-    version='0.0.0',
-    packages=[package_name],
+    version='0.1.0',
+    packages=[package_name, 'my_services', 'map_drawer', 'qr_reader'],
     data_files=[
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
@@ -26,7 +26,7 @@ setup(
             'qr_pose_pub = my_services.qr_pub_srv:main',
             'get_pose = my_services.posetion_request_srv:main',
             'serial_com1 = my_services.serial_com1:main',
-
+            'qr = qr_reader.qr_reader_sc:main'
         ],
     },
 )
