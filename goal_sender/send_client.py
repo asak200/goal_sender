@@ -5,9 +5,14 @@ import rclpy
 from rclpy.node import Node
 from rclpy.action import ActionClient
 from rclpy.action.client import ClientGoalHandle, GoalStatus
-from geometry_msgs.msg import PoseStamped, Point, Quaternion, PoseWithCovarianceStamped
+
 from nav2_msgs.action import NavigateToPose
+from geometry_msgs.msg import PoseStamped, Point, Quaternion
 from sensor_msgs.msg import Joy
+from pose_int.srv import Xyaz
+from std_msgs.msg import Empty
+
+from scipy.spatial.transform import Rotation as R
 import math
 
 
@@ -20,12 +25,9 @@ class CreateGoalSender(Node):
             NavigateToPose,
             'navigate_to_pose'
         )
-        self.pose_subscription = self.create_subscription(
-            PoseWithCovarianceStamped,
-            'pose',
-            self.listener_callback,
-            10)
-        self.pose_subscription
+        self.pose_cli = self.create_client(Xyaz, 'get_pose_srv')
+        while not self.pose_cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('waiting for get_pose server node...')
 
         self.prev_Y = 0
         self.joy_subscription = self.create_subscription(
@@ -35,23 +37,31 @@ class CreateGoalSender(Node):
             10)
         self.joy_subscription
 
+    def send_pose_request(self):
+        """Get the current position of the robot from another service"""
+        req = Xyaz.Request()
+        req.a = Empty()
+        return self.pose_cli.call_async(req)
+
     def joy_callback(self, msg):
         self.current_Y = msg.buttons[3]
         if self.current_Y and self.prev_Y:
             pass
         elif self.current_Y and not self.prev_Y:
-            self.send_goal(self.pose_x, self.pose_y, self.pose_az, self.pose_aw)
             self.prev_Y = 1
+            future = self.send_pose_request()
+            future.add_done_callback(self.when_pose_is_sent)
         else:
             self.prev_Y = 0
 
-
-    def listener_callback(self, msg):
-        self.pose_x = msg.pose.pose.position.x
-        self.pose_y = msg.pose.pose.position.y
-        self.pose_az = msg.pose.pose.orientation.z
-        self.pose_aw = msg.pose.pose.orientation.w
-
+    def when_pose_is_sent(self, future):
+        msg = future.result()
+        self.pose_x = msg.x
+        self.pose_y = msg.y
+        self.angle = msg.az
+        r = R.from_euler('xyz', [0, 0, self.angle], degrees=True)
+        q = r.as_quat()
+        self.send_goal(msg.x, msg.y, q[2], q[3])
 
     def send_goal(self, g_x, g_y, g_az, g_aw):
         # create goal

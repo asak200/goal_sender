@@ -13,12 +13,13 @@ class MyNode(Node):
 
     def __init__(self):
         super().__init__('qr_reader_node')
-        self.create_publisher(String, 'qr_order', 10)
+        self.qr_order_pub = self.create_publisher(String, 'qr_order', 10)
         self.font = cv2.FONT_HERSHEY_PLAIN
-        self.url='http://192.168.33.109/'
+        self.url='http://192.168.233.109/'
         cv2.namedWindow("live transmission", cv2.WINDOW_AUTOSIZE)
         # 192.168.33.109
         # 192.168.145.109
+        # 192.168.233.109
 
         self.pres = ""
         self.prev = ""
@@ -26,7 +27,7 @@ class MyNode(Node):
         self.i = 0
         self.timeout_duration = 2.
         self.create_timer(0.2, self.take_photo)
-        self.get_logger().info("Qr reader initialized")
+        self.get_logger().info(f"Qr reader initialized {self.url}")
 
     def take_photo(self):
         # print(self.i)
@@ -47,7 +48,9 @@ class MyNode(Node):
                 # print("Type:",obj.type)
                 # print("Data: ",obj.data)
                 self.order = str(obj.data)[9:-1]
-                print(self.order)
+                msg = String()
+                msg.data = self.order
+                self.qr_order_pub.publish(msg)
                 self.prev=self.pres
             cv2.putText(frame, self.order, (50, 50), self.font, 2,
                         (255, 255, 0), 3)

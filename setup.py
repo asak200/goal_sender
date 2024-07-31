@@ -23,7 +23,7 @@ setup(
             'my_send_goal = goal_sender.send_client:main',
             'image_saver_node = map_drawer.save_map:main',
             'map_updater = map_drawer.map_feature_drawer:main',
-            'qr_pose_pub = my_services.qr_pub_srv:main',
+            'qr_pose_pub = my_services.qr_pose_pub_srv:main',
             'get_pose = my_services.posetion_request_srv:main',
             'serial_com1 = my_services.serial_com1:main',
             'qr = qr_reader.qr_reader_sc:main'
