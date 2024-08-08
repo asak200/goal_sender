@@ -15,11 +15,12 @@ class MyNode(Node):
         super().__init__('qr_reader_node')
         self.qr_order_pub = self.create_publisher(String, 'qr_order', 10)
         self.font = cv2.FONT_HERSHEY_PLAIN
-        self.url='http://192.168.233.109/'
+        self.url='http://192.168.107.109/'
         cv2.namedWindow("live transmission", cv2.WINDOW_AUTOSIZE)
         # 192.168.33.109
         # 192.168.145.109
         # 192.168.233.109
+        # 192.168.107.109
 
         self.pres = ""
         self.prev = ""
