@@ -26,7 +26,8 @@ setup(
             'qr_pose_pub = my_services.qr_pose_pub_srv:main',
             'get_pose = my_services.posetion_request_srv:main',
             'serial_com1 = my_services.serial_com1:main',
-            'qr = qr_reader.qr_reader_sc:main'
+            'qr = qr_reader.qr_reader_sc:main',
+            'nav_vel_constrainer = goal_sender.nav_min_vel:main'
         ],
     },
 )
