@@ -21,6 +21,8 @@ class QRCodeScannerNode(Node):
         
         # Create a timer to capture and process frames at 10Hz
         self.timer = self.create_timer(0.02, self.timer_callback)
+
+        self.get_logger().info("qr_code_scanner initilized")
     
     def timer_callback(self):
         ret, frame = self.cap.read()
