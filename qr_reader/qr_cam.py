@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 import cv2
-from pyzbar.pyzbar import decode
+# from pyzbar.pyzbar import decode
 from std_msgs.msg import String
 
 class QRCodeScannerNode(Node):
@@ -29,7 +29,7 @@ class QRCodeScannerNode(Node):
             return
         
         # Decode QR codes from the frame
-        qr_codes = decode(frame)
+        # qr_codes = decode(frame)
         
         # for qr_code in qr_codes:
         #     qr_data = qr_code.data.decode('utf-8')
@@ -50,19 +50,19 @@ class QRCodeScannerNode(Node):
         cv2.waitKey(1)  # Needed to keep the window open
         
         
-        if len(qr_codes) == 0:
-            return
-        qr_data = qr_codes[0].data.decode('utf-8')
-        if self.prev_qr == qr_data:
-            return
-        self.prev_qr = qr_data
-        # self.get_logger().info(f"QR Code detected: {self.prev_qr}")
-        self.get_logger().info(f"QR Code noooooow: {qr_data}")
+        # if len(qr_codes) == 0:
+        #     return
+        # qr_data = qr_codes[0].data.decode('utf-8')
+        # if self.prev_qr == qr_data:
+        #     return
+        # self.prev_qr = qr_data
+        # # self.get_logger().info(f"QR Code detected: {self.prev_qr}")
+        # self.get_logger().info(f"QR Code noooooow: {qr_data}")
         
-        # Publish the QR code data
-        msg = String()
-        msg.data = qr_data
-        self.qr_order_pub.publish(msg)
+        # # Publish the QR code data
+        # msg = String()
+        # msg.data = qr_data
+        # self.qr_order_pub.publish(msg)
     
     def draw_qr_codes(self, frame, qr_codes):
         for qr_code in qr_codes:
