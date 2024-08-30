@@ -27,8 +27,8 @@ class MyNode(Node):
             elif abs(x) < mns:
                 x = mns * sign(x)
             return x
-        v = constrain(v, 0.25, 0.54)
-        a = constrain(a, 1., 1.5)
+        v = constrain(v, 0.1, 0.54)
+        a = constrain(a, .5, 1.5)
         
         msg = Twist()
         msg.linear.x = v

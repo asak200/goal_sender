@@ -72,8 +72,8 @@ class CreateGoalSender(Node):
         pose.header.frame_id = 'map'
 
         theta = 2 * math.atan2(g_az, g_aw)
-        pose.pose.position = Point(x=g_x + 5 * math.cos(theta), 
-                                   y=g_y + 5 * math.sin(theta), 
+        pose.pose.position = Point(x=g_x + 3 * math.cos(theta), 
+                                   y=g_y + 3 * math.sin(theta), 
                                    z=0.)
         pose.pose.orientation = Quaternion(x=0., y=0., z=g_az, w=g_aw)
 
