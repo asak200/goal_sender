@@ -46,8 +46,8 @@ class QRCodeScannerNode(Node):
         
         # # Display the frame with QR codes (optional, for debugging)
         # frame_with_qr = self.draw_qr_codes(frame, qr_codes)
-        # cv2.imshow('QR Code Scanner', frame)
-        # cv2.waitKey(1)  # Needed to keep the window open
+        cv2.imshow('QR Code Scanner', frame)
+        cv2.waitKey(1)  # Needed to keep the window open
         
         
         if len(qr_codes) == 0:

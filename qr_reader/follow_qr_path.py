@@ -12,7 +12,7 @@ class MyNode(Node):
 
     def __init__(self):
         super().__init__('qr_path_follower')
-        self.qr_listener = self.create_subscription(String, 'qr_order', self.qr_lis_callback, 10)
+        self.qr_listener = self.create_subscription(String, 'qr_order', self.qr_lis_callback_test, 10)
         self.send_order = self.create_client(CmdVelReq, 'send_vel_srv')
 
         self.empty_sen_1 = [21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 30, 29, 28, 27, 26, 25, 24, 23, 22]
@@ -25,6 +25,14 @@ class MyNode(Node):
         self.empty_sen_2D = ['f', 'f', 'f', 'f', 'f', 'r', 'f', 'r', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'r', 'f', 'r', 'f', 'f', 'f', 'f', 'f', 'f', 's']
         self.empty_sen_4D = copy.deepcopy(self.empty_sen_2D)
 
+        self.empty_sen_1_mod = [16, 14, 1, 29, 22]
+        self.empty_sen_1D_mod = ['l', 'l', 'l', 'l', 's']
+        self.empty_sen_2_mod = []
+        self.empty_sen_2D_mod = []
+        self.empty_sen_3_mod = []
+        self.empty_sen_3D_mod = []
+        self.empty_sen_4_mod = []
+        self.empty_sen_4D_mod = []
         # self.wei_sen_1_og = [42, 41, 7, 8, 9, 10, 11, 48, 49, 50, 51, 52, 18, 19, 20, 21, 22, 23, 24, 36, 37, 38, 39, 40, 4, 3, 31, 32, 33, 34, 35, 26, 25, 24, 23, 22, 21, 20, 43, 44, 45, 46, 47, 9, 8, 7, 41, 42, 22]
         # self.wei_sen_2_og = [42, 41, 7, 8, 9, 47, 46, 45, 44, 43, 20, 21, 22, 23, 24, 25, 26, 35, 34, 33, 32, 31, 3, 4, 40, 39, 38, 37, 36, 24, 23, 22, 21, 20, 19, 18, 52, 51, 50, 49, 48, 11, 10, 9, 8, 7, 41, 42, 22]
         # self.wei_sen_3_og = [41, 42, 22, 23, 24, 25, 26, 35, 34, 33, 32, 31, 3, 4, 5, 6, 7, 8, 9, 47, 46, 45, 44, 43, 19, 18, 52, 51, 50, 49, 48, 11, 10, 9, 8, 7, 6, 5, 40, 39, 38, 37, 36, 24, 23, 22, 42, 41, 7]
@@ -41,12 +49,20 @@ class MyNode(Node):
         self.ord = CmdVelReq.Request
         self.get_logger().info("qr_path_follower node initilized")
 
+        for i in range(len(self.empty_sen_2)):
+            if not self.empty_sen_2D[i] == 'f':
+                print(self.empty_sen_2[i], end=", ")
+        print("")
+        for i in range(len(self.empty_sen_2)):
+            if not self.empty_sen_2D[i] == 'f':
+                print(self.empty_sen_2D[i], end="', '")
+
     def qr_lis_callback_test(self, msg: String):
         msg = msg.data
         qr = msg.split(';')[0][1:]
         self.get_logger().info(qr)
 
-        self.ord.speed_request = 'or: r' + self.empty_sen_3D[0]
+        self.ord.speed_request = 'r'
         self.get_logger().info(f'{self.ord.speed_request}')
         # self.send_order.call_async(self.ord)
     
@@ -68,7 +84,7 @@ class MyNode(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = MyNode() 
-    rclpy.spin(node)
+    # rclpy.spin(node)
     rclpy.shutdown()
 
 
