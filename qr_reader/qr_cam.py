@@ -30,7 +30,7 @@ class QRCodeScannerNode(Node):
         self.prev_qr = None
         
         # Create a timer to capture and process frames at 10Hz
-        self.timer = self.create_timer(0.03, self.timer_callback)
+        self.timer = self.create_timer(0.01, self.timer_callback)
 
         self.get_logger().info("qr_code_scanner initilized")
     
@@ -60,7 +60,6 @@ class QRCodeScannerNode(Node):
         # frame_with_qr = self.draw_qr_codes(frame, qr_codes)
         # cv2.imshow('QR Code Scanner', frame_with_qr)
         # cv2.waitKey(1)  # Needed to keep the window open
-        
         
         if len(qr_codes) == 0:
             return

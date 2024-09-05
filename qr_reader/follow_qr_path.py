@@ -31,7 +31,7 @@ class MyNode(Node):
         self.empty_sen_2D_mod = ['r', 'r', 'r', 'r', 's']
         self.empty_sen_3_mod = [1, 29, 16, 14, 7]
         self.empty_sen_3D_mod = ['l', 'l', 'l', 'l', 's']
-        self.empty_sen_4_mod = [13, 15, 28, 30, 7]
+        self.empty_sen_4_mod = [52, 15, 28, 30, 7]
         self.empty_sen_4D_mod = ['r', 'r', 'r', 'r', 's']
 
         # self.wei_sen_1_og = [42, 41, 7, 8, 9, 10, 11, 48, 49, 50, 51, 52, 18, 19, 20, 21, 22, 23, 24, 36, 37, 38, 39, 40, 4, 3, 31, 32, 33, 34, 35, 26, 25, 24, 23, 22, 21, 20, 43, 44, 45, 46, 47, 9, 8, 7, 41, 42, 22]
@@ -62,7 +62,10 @@ class MyNode(Node):
         self.get_logger().info("qr_path_follower node initilized")
 
     def qr_lis_callback_test(self, msg: String):
-        msg = msg.data
+        msg: str = msg.data
+        self.get_logger().info(f"{msg}")
+        if not ';' in msg and msg.split(';') != 3:
+            return
         qr = msg.split(';')[0][1:]
         self.get_logger().info(qr)
         
@@ -80,17 +83,16 @@ class MyNode(Node):
         # if qn == 52:
         #     print(self.qr_positions)
     
-    
     def qr_lis_callback_v1(self, msg: String):
         msg = msg.data
         qr = msg.split(';')[0][1:]
-        # self.get_logger().info(qr)
+        self.get_logger().info(qr)
         if int(qr) == self.empty_sen_3[0]:
-            self.ord.speed_request = 'or: ' + self.empty_sen_3D[0]
+            self.ord.speed_request = 'or: ' + self.empty_sen_4_mod[0] + '\n'
             self.get_logger().info(f'{self.ord.speed_request}')
-            self.empty_sen_3.remove(self.empty_sen_3[0])
-            self.empty_sen_3D.remove(self.empty_sen_3D[0])
-            # self.send_order.call_async(self.ord)
+            self.empty_sen_4_mod.remove(self.empty_sen_4_mod[0])
+            self.empty_sen_4D_mod.remove(self.empty_sen_4D_mod[0])
+            self.send_order.call_async(self.ord)
 
     def qr_lis_callback_v2(self, msg: String):
         if len(self.empty_sen_3_mod) == 0:
@@ -101,11 +103,11 @@ class MyNode(Node):
         qr_d = msg.split(';')
         qr_n = int(qr_d[0][1:])
         
-        if qr_n == self.empty_sen_3_mod[0]:
-            self.ord.speed_request = 'or: ' + self.empty_sen_3D_mod[0] + '\n'
+        if qr_n == self.empty_sen_4_mod[0]:
+            self.ord.speed_request = 'or: ' + self.empty_sen_4D_mod[0] + '\n'
             self.get_logger().info(f'{self.ord.speed_request}')
-            self.empty_sen_3_mod.remove(self.empty_sen_3_mod[0])
-            self.empty_sen_3D_mod.remove(self.empty_sen_3D_mod[0])
+            self.empty_sen_4_mod.remove(self.empty_sen_4_mod[0])
+            self.empty_sen_4D_mod.remove(self.empty_sen_4D_mod[0])
             self.send_order.call_async(self.ord)
         return
         
