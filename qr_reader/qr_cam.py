@@ -16,11 +16,12 @@ class QRCodeScannerNode(Node):
             try:
                 self.cap = cv2.VideoCapture(i)
                 if not self.cap.isOpened():
-                    self.get_logger().error(f"Could not open camera on {i}")
-                self.get_logger().info(f"connected to {i}")
-                break
+                    self.get_logger().warn(f"Could not open camera on {i}")
             except:
-                pass
+                self.get_logger().warn(f"Could not open camera on {i}")
+            else:
+                self.get_logger().info(f"connected to {i}")
+
 
         self.prev_qr = None
         
