@@ -42,8 +42,8 @@ class CreateGoalSender(Node):
         self.vel_cli = self.create_client(CmdVelReq, 'send_vel_srv')
         self.req = CmdVelReq.Request()
 
-        # while not self.vel_cli.wait_for_service(timeout_sec=1.0):
-        #     self.get_logger().info('Service not available, waiting...')
+        while not self.vel_cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('Service not available, waiting...')
 
     def send_pose_request(self):
         """Get the current position of the robot from another service"""
@@ -126,6 +126,8 @@ class CreateGoalSender(Node):
         result = future.result().result
         if status == GoalStatus.STATUS_SUCCEEDED:
             self.get_logger().info("succeeded")
+            self.req.speed_request = "or: f"
+            self.vel_cli.call_async(self.req)
         elif status == GoalStatus.STATUS_ABORTED:
             self.get_logger().error("ABORTED")
         self.get_logger().info("Result: ")
