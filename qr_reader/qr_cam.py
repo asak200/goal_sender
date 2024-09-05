@@ -22,9 +22,9 @@ class QRCodeScannerNode(Node):
         #     else:
         #         self.get_logger().info(f"connected to {i}")
         
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(1)
         if not self.cap.isOpened():
-            self.get_logger().warn(f"Could not open camera")
+            self.get_logger().fatal(f"Could not open camera")
             rclpy.shutdown()
 
         self.prev_qr = None
