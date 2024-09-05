@@ -22,7 +22,7 @@ class QRCodeScannerNode(Node):
         #     else:
         #         self.get_logger().info(f"connected to {i}")
         
-        self.cap = cv2.VideoCapture(1)
+        self.cap = cv2.VideoCapture(2)
         if not self.cap.isOpened():
             self.get_logger().fatal(f"Could not open camera")
             rclpy.shutdown()
@@ -30,7 +30,7 @@ class QRCodeScannerNode(Node):
         self.prev_qr = None
         
         # Create a timer to capture and process frames at 10Hz
-        self.timer = self.create_timer(0.02, self.timer_callback)
+        self.timer = self.create_timer(0.03, self.timer_callback)
 
         self.get_logger().info("qr_code_scanner initilized")
     
@@ -95,14 +95,9 @@ def main(args=None):
     rclpy.init(args=args)
     
     node = QRCodeScannerNode()
-    
-    try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
-        pass
-    finally:
-        node.destroy_node()
-        rclpy.shutdown()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
