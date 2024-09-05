@@ -12,7 +12,7 @@ class QRCodeScannerNode(Node):
         self.qr_order_pub = self.create_publisher(String, 'qr_order', 10)
 
         # Initialize camera
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(2)
         if not self.cap.isOpened():
             self.get_logger().error("Could not open camera.")
             rclpy.shutdown()
@@ -33,38 +33,38 @@ class QRCodeScannerNode(Node):
         # Decode QR codes from the frame
         qr_codes = decode(frame)
         
-        # for qr_code in qr_codes:
-        #     qr_data = qr_code.data.decode('utf-8')
-        #     if self.prev_qr == qr_data:
-        #         continue
-        #     self.prev_qr = qr_data
-        #     # self.get_logger().info(f"QR Code detected: {self.prev_qr}")
-        #     self.get_logger().info(f"QR Code noooooow: {qr_data}")
+        for qr_code in qr_codes:
+            qr_data = qr_code.data.decode('utf-8')
+            if self.prev_qr == qr_data:
+                continue
+            self.prev_qr = qr_data
+            # self.get_logger().info(f"QR Code detected: {self.prev_qr}")
+            self.get_logger().info(f"QR Code noooooow: {qr_data}")
             
-        #     # Publish the QR code data
-        #     msg = String()
-        #     msg.data = qr_data
-        #     self.qr_order_pub.publish(msg)
+            # Publish the QR code data
+            msg = String()
+            msg.data = qr_data
+            self.qr_order_pub.publish(msg)
         
         # # Display the frame with QR codes (optional, for debugging)
-        # frame_with_qr = self.draw_qr_codes(frame, qr_codes)
-        # cv2.imshow('QR Code Scanner', frame)
-        # cv2.waitKey(1)  # Needed to keep the window open
+        frame_with_qr = self.draw_qr_codes(frame, qr_codes)
+        cv2.imshow('QR Code Scanner', frame_with_qr)
+        cv2.waitKey(1)  # Needed to keep the window open
         
         
-        if len(qr_codes) == 0:
-            return
-        qr_data = qr_codes[0].data.decode('utf-8')
-        if self.prev_qr == qr_data:
-            return
-        self.prev_qr = qr_data
-        # self.get_logger().info(f"QR Code detected: {self.prev_qr}")
-        self.get_logger().info(f"QR Code noooooow: {qr_data}")
+        # if len(qr_codes) == 0:
+        #     return
+        # qr_data = qr_codes[0].data.decode('utf-8')
+        # if self.prev_qr == qr_data:
+        #     return
+        # self.prev_qr = qr_data
+        # # self.get_logger().info(f"QR Code detected: {self.prev_qr}")
+        # self.get_logger().info(f"QR Code noooooow: {qr_data}")
         
-        # Publish the QR code data
-        msg = String()
-        msg.data = qr_data
-        self.qr_order_pub.publish(msg)
+        # # Publish the QR code data
+        # msg = String()
+        # msg.data = qr_data
+        # self.qr_order_pub.publish(msg)
     
     def draw_qr_codes(self, frame, qr_codes):
         for qr_code in qr_codes:

@@ -12,7 +12,7 @@ class MyNode(Node):
 
     def __init__(self):
         super().__init__('qr_path_follower')
-        self.qr_listener = self.create_subscription(String, 'qr_order', self.qr_lis_callback_test, 10)
+        self.qr_listener = self.create_subscription(String, 'qr_order', self.qr_lis_callback_v2, 10)
         self.send_order = self.create_client(CmdVelReq, 'send_vel_srv')
 
         self.empty_sen_1 = [21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 30, 29, 28, 27, 26, 25, 24, 23, 22]
@@ -56,31 +56,32 @@ class MyNode(Node):
         self.wei_sen_4_mod = [42, 24, 38, 40, 11, 50, 52, 19, 45, 47, 3, 33, 35, 18, 48, 7]
         self.wei_sen_4D_mod = ['l', 'r', 'u', 'r', 'r', 'd', 'r', 'r', 'u', 'l', 'l', 'd', 'l', 'l', 'l', 's']
 
-        self.qr_positions = [[0.,0.]]*52
+        self.qr_positions_comp = [[1.0, 0.0], [1.75, 0.0], [3.75, 0.0], [4.375, 0.0], [6.375, 0.0], [7.0, 0.0], [8.0, 0.0], [9.0, 0.0], [9.625, 0.0], [11.625, 0.0], [12.25, 0.0], [14.25, 0.0], [15.0, 0.0], [16.0, 1.0], [16.0, 11.5], [15.0, 12.5], [14.25, 12.5], [12.25, 12.5], [11.625, 12.5], [9.625, 12.5], [9.0, 12.5], [8.0, 12.5], [7.0, 12.5], [0.0, 0.0], [4.375, 12.5], [3.75, 12.5], [1.75, 12.5], [1.0, 12.5], [0.0, 11.5], [0.0, 1.0], [2.75, 1.0], [2.75, 5.25], [2.75, 6.25], [2.75, 7.25], [2.75, 11.5], [5.375, 11.5], [5.375, 7.25], [5.375, 6.25], [5.375, 5.25], [5.375, 1.0], [8.0, 1.0], [8.0, 11.5], [10.625, 11.5], [10.625, 7.25], [10.625, 6.25], [10.625, 5.25], [10.625, 1.0], [13.25, 1.0], [13.25, 5.25], [13.25, 6.25], [13.25, 7.25], [13.25, 11.5]]
         
-        self.ord = CmdVelReq.Request
+        self.ord = CmdVelReq.Request()
         self.get_logger().info("qr_path_follower node initilized")
 
     def qr_lis_callback_test(self, msg: String):
         msg = msg.data
-        qr_d = msg.split(';')
-        qn = int(qr_d[0][1:])
-        self.get_logger().info(f'{qn}')
-
-        x, y = float(qr_d[1]) /1000, float(qr_d[2]) /1000
-
-        self.qr_positions[qn-1] = [x, y]
-
-        if qn == 52:
-            print(self.qr_positions)
+        qr = msg.split(';')[0][1:]
+        self.get_logger().info(qr)
         
         # self.ord.speed_request = 'r'
         # self.get_logger().info(f'{self.ord.speed_request}')
         # self.send_order.call_async(self.ord)
+
+        # qr_d = msg.split(';')
+        # qn = int(qr_d[0][1:])
+        # self.get_logger().info(f'{qn}')
+
+        # x, y = float(qr_d[1]) /1000, float(qr_d[2]) /1000
+
+        # self.qr_positions[qn-1] = [x, y]
+        # if qn == 52:
+        #     print(self.qr_positions)
     
     
     def qr_lis_callback_v1(self, msg: String):
-        # print(555)
         msg = msg.data
         qr = msg.split(';')[0][1:]
         # self.get_logger().info(qr)
@@ -92,16 +93,23 @@ class MyNode(Node):
             # self.send_order.call_async(self.ord)
 
     def qr_lis_callback_v2(self, msg: String):
-        msg = msg.data
-        qr = msg.split(';')[0][1:]
-        if int(qr) == self.empty_sen_3[0]:
-            self.ord.speed_request = 'or: ' + self.empty_sen_3D[0]
-            self.get_logger().info(f'{self.ord.speed_request}')
-            self.empty_sen_3.remove(self.empty_sen_3[0])
-            self.empty_sen_3D.remove(self.empty_sen_3D[0])
-            # self.send_order.call_async(self.ord)
+        if len(self.empty_sen_3_mod) == 0:
+            self.get_logger().info("path is completed!")
+            return
         
-
+        msg = msg.data
+        qr_d = msg.split(';')
+        qr_n = int(qr_d[0][1:])
+        
+        if qr_n == self.empty_sen_3_mod[0]:
+            self.ord.speed_request = 'or: ' + self.empty_sen_3D_mod[0] + '\n'
+            self.get_logger().info(f'{self.ord.speed_request}')
+            self.empty_sen_3_mod.remove(self.empty_sen_3_mod[0])
+            self.empty_sen_3D_mod.remove(self.empty_sen_3D_mod[0])
+            self.send_order.call_async(self.ord)
+        return
+        
+        
 
 def main(args=None):
     rclpy.init(args=args)

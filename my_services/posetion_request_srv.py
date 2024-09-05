@@ -10,7 +10,7 @@ from math import pi
 class GetCurrentPose(Node):
 
     def __init__(self):
-        super().__init__('my_pose')
+        super().__init__('get_pose')
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
         self.pose_publisher_srv = self.create_service(
@@ -18,7 +18,7 @@ class GetCurrentPose(Node):
             'get_pose_srv',
             self.return_pose
         )
-        self.get_logger().info('my_pose initilized')
+        self.get_logger().info('get_pose initilized')
 
     
     def return_pose(self, request, response: Xyaz.Response):

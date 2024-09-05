@@ -9,7 +9,8 @@ from rclpy.action.client import ClientGoalHandle, GoalStatus
 from nav2_msgs.action import NavigateToPose
 from geometry_msgs.msg import PoseStamped, Point, Quaternion
 from sensor_msgs.msg import Joy
-from pose_int.srv import Xyaz
+from pose_int.srv import Xyaz, CmdVelReq
+from pose_int.msg import SerMsg
 from std_msgs.msg import Empty
 
 from scipy.spatial.transform import Rotation as R
@@ -37,6 +38,13 @@ class CreateGoalSender(Node):
             10)
         self.joy_subscription
 
+        self.ser_sub = self.create_subscription(SerMsg, 'serial_read', self.avoid, 10)
+        self.vel_cli = self.create_client(CmdVelReq, 'send_vel_srv')
+        self.req = CmdVelReq.Request()
+
+        # while not self.vel_cli.wait_for_service(timeout_sec=1.0):
+        #     self.get_logger().info('Service not available, waiting...')
+
     def send_pose_request(self):
         """Get the current position of the robot from another service"""
         req = Xyaz.Request()
@@ -54,11 +62,19 @@ class CreateGoalSender(Node):
         else:
             self.prev_Y = 0
 
+    def avoid(self, msg: SerMsg):
+        if msg.head == 'av' and msg.info == '0':
+            self.get_logger().info("now i must turn")
+            future = self.send_pose_request()
+            future.add_done_callback(self.when_pose_is_sent)
+        elif msg.head == 'av' and msg.info == '1':
+            self.cancel_goal()
+
     def when_pose_is_sent(self, future):
         msg = future.result()
         self.pose_x = msg.x
         self.pose_y = msg.y
-        self.angle = msg.az
+        self.angle = msg.az + 45
         r = R.from_euler('xyz', [0, 0, self.angle], degrees=True)
         q = r.as_quat()
         self.send_goal(msg.x, msg.y, q[2], q[3])
@@ -88,7 +104,6 @@ class CreateGoalSender(Node):
             send_goal_async(goal). \
                 add_done_callback(self.goal_response_callback)
 
-
     def goal_response_callback(self, future):
         self.goal_handle_: ClientGoalHandle = future.result()
         if self.goal_handle_.accepted:
@@ -96,6 +111,15 @@ class CreateGoalSender(Node):
             self.goal_handle_.get_result_async().add_done_callback(self.goal_result_callback)
         else:
             self.get_logger().warn("goal got denied")
+
+    def cancel_goal(self):
+        if self.goal_handle_:
+            cancel_future = self.goal_handle_.cancel_goal_async()
+            cancel_future.add_done_callback(self.cancel_done_callback)
+
+    def cancel_done_callback(self, future):
+        cancel_response = future.result()
+        self.get_logger().info(f'{cancel_response}')
 
     def goal_result_callback(self, future):
         status = future.result().status

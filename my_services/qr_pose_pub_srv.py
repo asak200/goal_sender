@@ -64,7 +64,7 @@ class QrDrawerSrv(Node):
         else:
             self.prev_X = 0
 
-    def srv_callback(self, req, res):
+    def srv_callback(self, req, res: ArrayResult.Response):
         """Return a list containing all qr positions in the map"""
         res.result = []
         res.result = self.qr_posetions
