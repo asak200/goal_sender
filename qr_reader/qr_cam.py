@@ -12,10 +12,15 @@ class QRCodeScannerNode(Node):
         self.qr_order_pub = self.create_publisher(String, 'qr_order', 10)
 
         # Initialize camera
-        self.cap = cv2.VideoCapture(1)
-        if not self.cap.isOpened():
-            self.get_logger().error("Could not open camera.")
-            rclpy.shutdown()
+        for i in range(0, 50):
+            try:
+                self.cap = cv2.VideoCapture(i)
+                if not self.cap.isOpened():
+                    self.get_logger().error(f"Could not open camera on {i}")
+                self.get_logger().info(f"connected to {i}")
+                break
+            except:
+                pass
 
         self.prev_qr = None
         
