@@ -11,7 +11,7 @@ import time
 
 # Constants
 LICENSE_KEY = "t0068lQAAAJo4Zphb/H5u+hXkMvNYkvJaugGDuxhkxlHomBIS5p+ik4EniQHb+nJT0Etw4jT62Tk0eDNSocYKOJBwBRQjoxY=;t0068lQAAAJk9a1kS3kziyId8qSP5UVnwj3EaWWBtK+Tb+z8pfy0vmn+7H2DaXfKRWaqe5SGIQNwplT7CnjzGG7RCimgStO0="
-CAMERA_INDEX = 2
+CAMERA_INDEX = 0
 MAX_THREADS = cv.getNumberOfCPUs()
 
 
