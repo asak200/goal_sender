@@ -53,11 +53,6 @@ class OptimizedQRCodeScannerNode(Node):
                     task = pool.apply_async(self.process_frame, (frame.copy(), reader))
                     barcode_tasks.append(task)
 
-                cv.imshow('Barcode & QR Code Scanner', frame)
-
-                if cv.waitKey(1) & 0xFF == 27:  # ESC key
-                    break
-
                 # Calculate and print FPS every 10 seconds
                 if time.time() - start_time > 10:
                     fps = frame_count / (time.time() - start_time)
