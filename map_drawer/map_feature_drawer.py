@@ -15,12 +15,12 @@ class FeatureDrawer(Node):
 
     def __init__(self):
         super().__init__('map_updater')
-        self.pose_cli = self.create_client(Xyaz, 'get_pose_srv')
-        self.qr_pose_cli = self.create_client(ArrayResult, 'qr_poses')
-        while not self.pose_cli.wait_for_service(timeout_sec=1.0):
-            self.get_logger().info('waiting for get_pose_srv to initiate...')
-        while not self.qr_pose_cli.wait_for_service(timeout_sec=1.0):
-            self.get_logger().info('waiting for qr_poses to initiate...')
+        # self.pose_cli = self.create_client(Xyaz, 'get_pose_srv')
+        # self.qr_pose_cli = self.create_client(ArrayResult, 'qr_poses')
+        # while not self.pose_cli.wait_for_service(timeout_sec=1.0):
+        #     self.get_logger().info('waiting for get_pose_srv to initiate...')
+        # while not self.qr_pose_cli.wait_for_service(timeout_sec=1.0):
+        #     self.get_logger().info('waiting for qr_poses to initiate...')
         
         self.raw_img_dir = '/home/asak/dev_ws2/the_map.png'
         self.yaml_dir = '/home/asak/dev_ws2/the_map.yaml'
@@ -42,13 +42,14 @@ class FeatureDrawer(Node):
         return self.qr_pose_cli.call_async(req)
 
     def timer_callback(self):
-        future = self.get_robot_position()
-        future.add_done_callback(self.when_pose_is_sent)
+        # future = self.get_robot_position()
+        # future.add_done_callback(self.when_pose_is_sent)
+        self.when_pose_is_sent()
         
-    def when_pose_is_sent(self, future):
-        msg = future.result()
-        if type(msg.x) == float:
-            self.draw_on_map(msg.x, msg.y, msg.az)
+    def when_pose_is_sent(self):
+        # msg = future.result()
+        if type(0.0) == float:
+            self.draw_on_map(0, 0, 0)
         else:
             self.get_logger().info("error")
 
@@ -82,8 +83,13 @@ class FeatureDrawer(Node):
         self.rect = (rob_pose, rob_size, rob_angle)
 
         # get the qr code positions
-        future = self.get_qr_positions()
-        future.add_done_callback(self.when_qr_is_sent)
+        # future = self.get_qr_positions()
+        # future.add_done_callback(self.when_qr_is_sent)
+        cv2.imwrite(self.out_img_dir, self.img)
+
+        box = cv2.boxPoints(self.rect)
+        box = np.int0(box)
+        cv2.drawContours(self.img, [box], 0, (0, 0, 255), -1)
 
     def when_qr_is_sent(self, future):
         # draw path points

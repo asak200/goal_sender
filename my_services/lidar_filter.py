@@ -10,8 +10,8 @@ class RPLIDARFilter(Node):
 
     def scan_callback(self, msg: LaserScan):
         # Define the angle range to keep (in radians)
-        min_angle = -1.57 * 4/3  # Example: -57 degrees (in radians)
-        max_angle = 1.57 *4/3  # Example: 57 degrees (in radians)
+        min_angle = -1.57 * 4/3 - 120 * 3.14/180  # Example: -57 degrees (in radians)
+        max_angle = 1.57 *4/3 - 120 * 3.14/180 # Example: 57 degrees (in radians)
 
         # Copy the original scan message
         filtered_scan = LaserScan()
