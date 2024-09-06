@@ -26,9 +26,10 @@ setup(
             'qr_pose_pub = my_services.qr_pose_pub_srv:main',
             'get_pose = my_services.posetion_request_srv:main',
             'serial_com1 = my_services.serial_com1:main',
-            'qr = qr_reader.qr_cam:main',
+            'laser_constrainer = my_services.lidar_filter:main',
+            'qr = qr_reader.qr_cam_v2:main',
             'qr_path_follower = qr_reader.follow_qr_path:main',
-            'nav_vel_constrainer = goal_sender.nav_min_vel:main'
+            'nav_vel_constrainer = goal_sender.nav_min_vel:main',
         ],
     },
 )

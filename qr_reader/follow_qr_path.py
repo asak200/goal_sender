@@ -95,11 +95,14 @@ class MyNode(Node):
             self.send_order.call_async(self.ord)
 
     def qr_lis_callback_v2(self, msg: String):
+        msg: str = msg.data
+        self.get_logger().info(f"{msg}")
+        if not ';' in msg and msg.split(';') != 3:
+            return
         if len(self.empty_sen_3_mod) == 0:
             self.get_logger().info("path is completed!")
             return
         
-        msg = msg.data
         qr_d = msg.split(';')
         qr_n = int(qr_d[0][1:])
         
