@@ -106,11 +106,11 @@ class MyNode(Node):
         qr_d = msg.split(';')
         qr_n = int(qr_d[0][1:])
         
-        if qr_n == self.empty_sen_4_mod[0]:
-            self.ord.speed_request = 'or: ' + self.empty_sen_4D_mod[0] + '\n'
+        if qr_n == self.wei_sen_4_mod[0]:
+            self.ord.speed_request = 'or: ' + self.wei_sen_4_mod[0] + '\n'
             self.get_logger().info(f'{self.ord.speed_request}')
-            self.empty_sen_4_mod.remove(self.empty_sen_4_mod[0])
-            self.empty_sen_4D_mod.remove(self.empty_sen_4D_mod[0])
+            self.wei_sen_4_mod.remove(self.wei_sen_4_mod[0])
+            self.wei_sen_4D_mod.remove(self.wei_sen_4D_mod[0])
             self.send_order.call_async(self.ord)
         return
         
